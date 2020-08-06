@@ -6,7 +6,7 @@ use warnings;
 
 =head1 NAME
 
-App::wsgetmail - The great new App::wsgetmail!
+App::wsgetmail - Fetch mail from the cloud using webservices
 
 =head1 VERSION
 
@@ -16,22 +16,20 @@ Version 0.01
 
 our $VERSION = '0.01';
 
+=head1 DESCRIPTION
+
+A simple command line application/script to fetch mail from the cloud
+using webservices instead of IMAP and POP.
+
+Configurable to mark fetched mail as read, or to delete it, and with
+configurable action with the fetched email.
 
 =head1 SYNOPSIS
-
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
 
     use App::wsgetmail;
 
     my $foo = App::wsgetmail->new();
     ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
 
 =head1 SUBROUTINES/METHODS
 
@@ -46,9 +44,6 @@ sub function1 {
 
 =cut
 
-sub function2 {
-}
-
 =head1 AUTHOR
 
 Aaron Trevena, C<< <ast at bestpractical.com> >>
@@ -58,9 +53,6 @@ Aaron Trevena, C<< <ast at bestpractical.com> >>
 Please report any bugs or feature requests to C<bug-app-wsgetmail at rt.cpan.org>, or through
 the web interface at L<https://rt.cpan.org/NoAuth/ReportBug.html?Queue=App-wsgetmail>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
-
 
 =head1 SUPPORT
 
@@ -97,7 +89,7 @@ L<https://metacpan.org/release/App-wsgetmail>
 
 =head1 LICENSE AND COPYRIGHT
 
-This software is Copyright (c) 2020 by Aaron Trevena.
+This software is Copyright (c) 2020 by Best Practical Solutions, LLC
 
 This is free software, licensed under:
 
