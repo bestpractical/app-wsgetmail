@@ -1,8 +1,8 @@
 package App::wsgetmail;
 
-use 5.006;
-use strict;
-use warnings;
+use Moo;
+
+our $VERSION = '0.03';
 
 =head1 NAME
 
@@ -10,11 +10,7 @@ App::wsgetmail - Fetch mail from the cloud using webservices
 
 =head1 VERSION
 
-Version 0.01
-
-=cut
-
-our $VERSION = '0.01';
+0.03
 
 =head1 DESCRIPTION
 
@@ -26,76 +22,186 @@ configurable action with the fetched email.
 
 =head1 SYNOPSIS
 
-    use App::wsgetmail;
+wsgetmail365 --configuration path/to/file.json [--debug] [ --dry-run]
 
-    my $foo = App::wsgetmail->new();
-    ...
+=head1 CONFIGURATION
 
-=head1 SUBROUTINES/METHODS
+Configuration of the wsgetmail tool needs the following fields specific to the ms365 application:
+Application (client) ID,
+Directory (tenant) ID
 
-=head2 function1
+For access to the email account you need:
+Account email address
+Account password
+Folder (defaults to inbox, currently only one folder is supported)
 
-=cut
+For forwarding to RT via rt-mailgate you need :
+RT URL
+Path to rt-mailgate
+Recipient address (usually same as account email address, could be a shared mailbox or alias)
+action on fetching mail : either "mark_as_read" or "delete"
 
-sub function1 {
+example configuration :
+{
+   "command": "/path/to/rt/bin/rt-mailgate",
+   "command_args": "--url http://rt.example.tld/ --queue general --action correspond",
+   "command_timeout": 15,
+   "recipient":"rt@example.tld",
+   "action_on_fetched":"mark_as_read",
+   "username":"rt@example.tld",
+   "user_password":"password",
+   "tenant_id":"abcd1234-xxxx-xxxx-xxxx-123abcde1234",
+   "client_id":"abcd1234-xxxx-xxxx-xxxx-1234abcdef99",
+   "folder":"Inbox"
 }
 
-=head2 function2
+an example configuration file is included in the docs/ directory of this package
 
 =cut
 
-=head1 AUTHOR
+use Clone 'clone';
+use Module::Load;
+use App::wsgetmail::MDA;
 
-Aaron Trevena, C<< <ast at bestpractical.com> >>
+has config => (
+    is => 'ro',
+    required => 1
+);
 
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-app-wsgetmail at rt.cpan.org>, or through
-the web interface at L<https://rt.cpan.org/NoAuth/ReportBug.html?Queue=App-wsgetmail>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc App::wsgetmail
+has mda => (
+    is => 'rw',
+    lazy => 1,
+    handles => [ qw(forward) ],
+    builder => '_build_mda'
+);
 
 
-You can also look for information at:
+has client_class => (
+    is => 'ro',
+    default => sub { 'MS365' }
+);
+
+has client => (
+    is => 'ro',
+    lazy => 1,
+    handles => [ qw( get_next_message
+                     get_message_mime_content
+                     mark_message_as_read
+                     delete_message) ],
+    builder => '_build_client'
+);
+
+
+has _post_fetch_action => (
+    is => 'ro',
+    lazy => 1,
+    builder => '_build__post_fetch_action'
+);
+
+
+sub _build__post_fetch_action {
+    my $self = shift;
+    my $fetched_action_method;
+    my $action = $self->config->{action_on_fetched};
+    return undef unless (defined $action);
+    if (lc($action) eq 'mark_as_read') {
+        $fetched_action_method = 'mark_message_as_read';
+    } elsif ( lc($action) eq "delete" ) {
+        $fetched_action_method = 'delete_message';
+    } else {
+        $fetched_action_method = undef;
+        warn "no recognised action for fetched mail, mailbox not updated";
+    }
+    return $fetched_action_method;
+}
+
+
+sub process_message {
+    my ($self, $message) = @_;
+    my $client = $self->client;
+    my $filename = $client->get_message_mime_content($message->id);
+    unless ($filename) {
+        warn "failed to get mime content for message ". $message->id;
+        return 0;
+    }
+    my $ok = $self->forward($message, $filename);
+    if ($ok) {
+        $ok = $self->post_fetch_action($message);
+    }
+    if ($self->config->{dump_messages}) {
+        warn "dumped message in file $filename" if ($self->config->{debug});
+    }
+    else {
+        unlink $filename or warn "couldn't delete message file $filename : $!";
+    }
+    return $ok;
+}
+
+sub post_fetch_action {
+    my ($self, $message) = @_;
+    my $method = $self->_post_fetch_action;
+    my $ok = 1;
+    # check for dry-run option
+    if ($self->config->{dry_run}) {
+        warn "dry run so not running $method action on fetched mail";
+        return 1;
+    }
+    if ($method) {
+        $ok = $self->$method($message->id);
+    }
+    return $ok;
+}
+
+###
+
+sub _build_client {
+    my $self = shift;
+    my $classname = 'App::wsgetmail::' . $self->client_class;
+    load $classname;
+    my $config = clone $self->config;
+    $config->{post_fetch_action} = $self->_post_fetch_action;
+    return $classname->new($config);
+}
+
+
+sub _build_mda {
+    my $self = shift;
+    my $config = clone $self->config;
+    if ( defined $self->config->{username}) {
+        $config->{recipient} //= $self->config->{username};
+    }
+    return App::wsgetmail::MDA->new($config);
+}
+
+
+
+##
+
+
+=head1 SEE ALSO
 
 =over 4
 
-=item * RT: CPAN's request tracker (report bugs here)
+=item App::wsgetmail::MDA
 
-L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=App-wsgetmail>
+=item App::wsgetmail::MS365
 
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/App-wsgetmail>
-
-=item * CPAN Ratings
-
-L<https://cpanratings.perl.org/d/App-wsgetmail>
-
-=item * Search CPAN
-
-L<https://metacpan.org/release/App-wsgetmail>
+=item wsgemail365
 
 =back
 
+=head1 AUTHOR
 
-=head1 ACKNOWLEDGEMENTS
-
+Best Practical Solutions, LLC <modules@bestpractical.com>
 
 =head1 LICENSE AND COPYRIGHT
 
-This software is Copyright (c) 2020 by Best Practical Solutions, LLC
+This software is Copyright (c) 2015-2020 by Best Practical Solutions, LLC.
 
 This is free software, licensed under:
 
-  The Artistic License 2.0 (GPL Compatible)
-
+The GNU General Public License, Version 2, June 1991
 
 =cut
 
-1; # End of App::wsgetmail
+1;

@@ -1,47 +1,55 @@
-App-wsgetmail
+NAME
+    App::wsgetmail - Fetch mail from the cloud using webservices
 
-A simple command line application/script to fetch mail from the cloud
-using webservices instead of IMAP and POP.
+DESCRIPTION
+    A simple command line application/script to fetch mail from the cloud
+    using webservices instead of IMAP and POP.
 
-Configurable to mark fetched mail as read, or to delete it, and with
-configurable action with the fetched email.
+    Configurable to mark fetched mail as read, or to delete it, and with
+    configurable action with the fetched email.
 
-INSTALLATION
+SYNOPSIS
+    wsgetmail365 --configuration path/to/file.json [--debug]
 
-To install this module, run the following commands:
+CONFIGURATION
+    Configuration of the wsgetmail tool needs the following fields specific
+    to the ms365 application: Application (client) ID, Directory (tenant) ID
 
-	perl Makefile.PL
-	make
-	make test
-	make install
+    For access to the email account you need: Account email address Account
+    password Folder (defaults to inbox, currently only one folder is
+    supported)
 
-SUPPORT AND DOCUMENTATION
+    Example configuration :
 
-After installing, you can find documentation for this module with the
-perldoc command.
+    {
+       "command": "/path/to/rt/bin/rt-mailgate",
+       "command_args": "--url http://rt.example.tld/ --queue general --action correspond",
+       "command_timeout": 15,
+       "recipient":"rt@example.tld",
+       "action_on_fetched":"mark_as_read",
+       "username":"rt@example.tld",
+       "user_password":"password",
+       "tenant_id":"abcd1234-xxxx-xxxx-xxxx-123abcde1234",
+       "client_id":"abcd1234-xxxx-xxxx-xxxx-1234abcdef99",
+       "folder":"Inbox"
+    }
 
-    perldoc App::wsgetmail
 
-You can also look for information at:
+    an example configuration file is included in the docs/ directory of this
+    package
 
-    RT, CPAN's request tracker (report bugs here)
-        https://rt.cpan.org/NoAuth/Bugs.html?Dist=App-wsgetmail
+SEE ALSO
+    App::wsgetmail::MS365
+    wsgemail365
 
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/App-wsgetmail
-
-    CPAN Ratings
-        https://cpanratings.perl.org/d/App-wsgetmail
-
-    Search CPAN
-        https://metacpan.org/release/App-wsgetmail
-
+AUTHOR
+    Best Practical Solutions, LLC <modules@bestpractical.com>
 
 LICENSE AND COPYRIGHT
+    This software is Copyright (c) 2015-2020 by Best Practical Solutions,
+    LLC.
 
-This software is Copyright (c) 2020 by Best Practical Solutions, LLC.
+    This is free software, licensed under:
 
-This is free software, licensed under:
-
-  The Artistic License 2.0 (GPL Compatible)
+    The GNU General Public License, Version 2, June 1991
 

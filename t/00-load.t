@@ -1,13 +1,13 @@
-#!perl -T
-use 5.006;
+#!perl 
 use strict;
-use warnings;
 use Test::More;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
 
-plan tests => 1;
+use_ok( 'App::wsgetmail' );
+use_ok( 'App::wsgetmail::MS365' );
+use_ok( 'App::wsgetmail::MS365::Client' );
+use_ok( 'App::wsgetmail::MS365::Message');
+use_ok( 'App::wsgetmail::MDA' );
 
-BEGIN {
-    use_ok( 'App::wsgetmail' ) || print "Bail out!\n";
-}
-
-diag( "Testing App::wsgetmail $App::wsgetmail::VERSION, Perl $], $^X" );
+done_testing();

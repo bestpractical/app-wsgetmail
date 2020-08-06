@@ -1,5 +1,11 @@
 Revision history for App-wsgetmail
 
+0.03    4/8/20
+        Improved debugging
+
+0.02    17/07/20
+        Reworked mail delivery
+
 0.01    20/05/20
         Initial Implementation
 
