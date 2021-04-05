@@ -75,8 +75,6 @@ sub _run_command {
         return 1;
     }
     my $ok = run ([ $self->command, _split_command_args($self->command_args, 1)], $fh, \$output, \$error, timeout( $self->command_timeout + 5 ) );
-    close $fh;
-
     unless ($ok) {
         warn sprintf('failed to run command "%s %s" for file %s : %s : %s',
                      $self->command,
@@ -84,7 +82,7 @@ sub _run_command {
                      $filename, $!, $?);
         warn "output : $output\nerror:$error\n" if ($self->debug);
     }
-
+    close $fh;
     return $ok;
 }
 
