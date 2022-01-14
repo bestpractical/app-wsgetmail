@@ -17,6 +17,9 @@ has command_timeout => (
     default => sub { 30; }
 );
 
+# extension and recipient were used in previous versions, but the code was
+# buggy and has since been removed. They're only here for backwards API
+# compatibility.
 has extension => (
     is => 'ro',
     required => 0
@@ -34,7 +37,7 @@ has debug => (
 
 
 
-my @config_fields = qw( command command_args command_timeout extension recipient debug);
+my @config_fields = qw( command command_args command_timeout debug );
 around BUILDARGS => sub {
     my ( $orig, $class, $config ) = @_;
     my $attributes = { map { $_ => $config->{$_} } @config_fields };
@@ -46,22 +49,6 @@ around BUILDARGS => sub {
 
 sub forward {
     my ($self, $message, $filename) = @_;
-    # build arguments
-    if ($self->extension) {
-        # get relevent recipients for extension check
-        foreach my $recipient (@{$message->recipients}) {
-            last if ($recipient = $self->recipient);
-            my ($username, $domain) = split(/\@/, $recipient);
-            my $extension;
-            ($username, $extension) = split(/\+/, $username);
-            next unless (defined $extension && ( $extension =~ /\S/ ));
-            if (sprintf('%s@%s',$username,$domain) eq $self->recipient) {
-                $ENV{EXTENSION} = $extension;
-            }
-        }
-    }
-
-    # run command
     return $self->_run_command($filename);
 }
 
