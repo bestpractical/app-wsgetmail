@@ -1,25 +1,73 @@
+=head1 NAME
+
+App::wsgetmail::MDA - Deliver mail to another command's standard input
+
+=head1 SYNOPSIS
+
+    my $mda = App::wsgetmail::MDA->new({
+      command => "/opt/rt5/bin/rt-mailgate",
+      command_args => "--url https://rt.example.com --queue General --action correspond",
+      command_timeout => 15,
+      debug => 0,
+    })
+    $mda->forward($message, $message_path);
+
+=head1 DESCRIPTION
+
+App::wsgetmail::MDA takes mail fetched from web services and routes it to
+another command via standard input.
+
+=cut
+
 package App::wsgetmail::MDA;
 use Moo;
 
 use IPC::Run qw( run timeout );
 
+=head1 ATTRIBUTES
+
+You can initialize a new App::wsgetmail::MDA object with the attributes
+below. C<command> and C<command_args> are required; the rest are
+optional. All attributes are read-only.
+
+=head2 command
+
+A string with the executable to run. You can specify an absolute path, or a
+plain command name which will be found from C<$PATH>.
+
+=cut
+
 has command => (
     is => 'ro',
     required => 1,
 );
+
+=head2 command_args
+
+A string with additional arguments to call C<command> with. These arguments
+follow shell quoting rules: you can escape characters with a backslash, and
+denote a single string argument with single or double quotes.
+
+=cut
+
 has command_args => (
     is => 'ro',
     required => 1,
 );
+
+=head2 command_timeout
+
+A number. The run command will be terminated if it takes longer than this many
+seconds.
+
+=cut
 
 has command_timeout => (
     is => 'ro',
     default => sub { 30; }
 );
 
-# extension and recipient were used in previous versions, but the code was
-# buggy and has since been removed. They're only here for backwards API
-# compatibility.
+# extension and recipient are currently unused. See pod below.
 has extension => (
     is => 'ro',
     required => 0
@@ -29,6 +77,26 @@ has recipient => (
     is => 'ro',
     required => 0,
 );
+
+=head2 debug
+
+A boolean. If true, the object will issue additional diagnostic warnings if it
+encounters any trouble.
+
+=head2 Unused Attributes
+
+These attributes were used in previous versions of the module. They are
+currently unimplemented and always return undef. You cannot initialize them.
+
+=over 4
+
+=item * extension
+
+=item * recipient
+
+=back
+
+=cut
 
 has debug => (
     is => 'ro',
@@ -45,7 +113,15 @@ around BUILDARGS => sub {
 };
 
 
-###
+=head1 METHODS
+
+=head2 forward($message, $filename)
+
+Invokes the configured command to deliver the given message. C<$message> is
+an object like L<App::wsgetmail::MS365::Message>. C<$filename> is the path
+to a file with the raw message content.
+
+=cut
 
 sub forward {
     my ($self, $message, $filename) = @_;
@@ -130,5 +206,19 @@ sub _split_command_args {
     push @args, $next_arg if defined $next_arg;
     return @args;
 }
+
+=head1 AUTHOR
+
+Best Practical Solutions, LLC <modules@bestpractical.com>
+
+=head1 LICENSE AND COPYRIGHT
+
+This software is Copyright (c) 2015-2020 by Best Practical Solutions, LLC.
+
+This is free software, licensed under:
+
+The GNU General Public License, Version 2, June 1991
+
+=cut
 
 1;
