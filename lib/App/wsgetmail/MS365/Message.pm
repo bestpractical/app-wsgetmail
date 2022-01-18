@@ -7,17 +7,19 @@ App::wsgetmail::MS365::Message
 
 =head2 DESCRIPTION
 
-Simple Moo class representing an microsoft/outlook 365 message.
+Simple Moo class representing an Microsoft/Outlook 365 message.
 
-=head2 ACCESSORS
+=head2 ATTRIBUTES
+
+All attributes are read-only.
 
 =over 4
 
-=item id
+=item * id
 
-=item status
+=item * status
 
-=item recipients
+=item * recipients
 
 =back
 
@@ -61,13 +63,13 @@ around BUILDARGS => sub {
 
 =over 4
 
-=item App::wsgetmail::MS365
+=item * L<App::wsgetmail::MS365>
 
 =back
 
 =head1 AUTHOR
 
-Aaron Trevena, C<< <ast at bestpractical.com> >>
+Best Practical Solutions, LLC <modules@bestpractical.com>
 
 =head1 LICENSE AND COPYRIGHT
 
@@ -75,9 +77,8 @@ This software is Copyright (c) 2020 by Best Practical Solutions, LLC
 
 This is free software, licensed under:
 
-  The Artistic License 2.0 (GPL Compatible)
+  The GNU General Public License, Version 2, June 1991
 
 =cut
-
 
 1;
