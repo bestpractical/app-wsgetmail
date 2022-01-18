@@ -13,6 +13,18 @@ use App::wsgetmail::MS365::Client;
 use App::wsgetmail::MS365::Message;
 use File::Temp;
 
+=head1 SYNOPSIS
+
+    my $ms365 = App::wsgetmail::MS365->new({
+      client_id => "client UUID",
+      tenant_id => "tenant UUID",
+      secret => "random secret token",
+      global_access => 1,
+      folder => "Inbox",
+      post_fetch_action => "mark_message_as_read",
+      debug => 0,
+    })
+
 =head1 DESCRIPTION
 
 Moo class providing methods to connect to and fetch mail from Microsoft 365
@@ -20,23 +32,14 @@ Moo class providing methods to connect to and fetch mail from Microsoft 365
 
 =head1 ATTRIBUTES
 
-=over 4
+You must provide C<client_id>, C<tenant_id>, C<post_fetch_action>, and
+authentication details. If C<global_access> is false (the default), you must
+provide C<username> and C<user_password>. If you set C<global_access> to a
+true value, you must provide C<secret>.
 
-=item client_id
+=head2 client_id
 
-=item tenant_id
-
-=item username
-
-=item user_password
-
-=item global_access
-
-=item secret
-
-=item folder
-
-=back
+A string with the UUID of the client application to use for authentication.
 
 =cut
 
@@ -45,20 +48,47 @@ has client_id => (
     required => 1,
 );
 
+=head2 tenant_id
+
+A string with the UUID of your Microsoft 365 tenant to use for authentication.
+
+=cut
+
 has tenant_id => (
     is => 'ro',
     required => 1,
 );
+
+=head2 username
+
+A string with a username email address. If C<global_access> is false (the
+default), the client authenticates with this username. If C<global_access>
+is true, the client accesses this user's mailboxes.
+
+=cut
 
 has username => (
     is => 'ro',
     required => 0
 );
 
+=head2 user_password
+
+A string with the user password to use for authentication without global
+access.
+
+=cut
+
 has user_password => (
     is => 'ro',
     required => 0
 );
+
+=head2 folder
+
+A string with the name of the email folder to read. Default "Inbox".
+
+=cut
 
 has folder => (
     is => 'ro',
@@ -66,20 +96,52 @@ has folder => (
     default => sub { 'Inbox' }
 );
 
+=head2 global_access
+
+A boolean. If false (the default), the client will authenticate using
+C<username> and C<user_password>. If true, the client will authenticate
+using its C<secret> token.
+
+=cut
+
 has global_access => (
     is => 'ro',
     default => sub { return 0 }
 );
+
+=head2 secret
+
+A string with the client secret to use for global authentication. This
+should look like a long string of completely random characters, not a UUID
+or other recognizable format.
+
+=cut
 
 has secret => (
     is => 'ro',
     required => 0,
 );
 
+=head2 post_fetch_action
+
+A string with the name of a method to call after reading a message. You
+probably want to pass either "mark_message_as_read" or "delete_message". In
+principle, you can pass the name of any method that accepts a message ID
+string argument.
+
+=cut
+
 has post_fetch_action => (
     is => 'ro',
     required => 1
 );
+
+=head2 debug
+
+A boolean. If true, the object will issue a warning with details about each
+request it issues.
+
+=cut
 
 has debug => (
     is => 'rw',
@@ -332,76 +394,18 @@ sub _build_client {
 
 }
 
-=head1 CONFIGURATION
+=head1 AUTHOR
 
-=head2 Setting up mail API integration in microsoft365
-
-Active Directory application configuration
-
-From Azure Active directory admin center.
-
-=over 4
-
-=item 1.
-
-Go to App Registrations and then "New registration", select single tenant and register.
-
-=item 2.
-
-Go to certificates and secrets, add a new client secret.
-
-=item 3.
-
-Go to API permissions and add the following delegated rights for Microsoft Graph:
-
-=over 6
-
-=item * Mail.Read Delegated right
-
-=item * Mail.Read.Shared Delegated right
-
-=item * Mail.ReadWrite Delegated right
-
-=item * Mail.ReadWrite.Shared Delegated right
-
-=item * openid  Delegated right
-
-=item * User.Read  Delegated right
-
-=back
-
-=item 4.
-
-Once the rights have been added, grant admin consent to allow the API client to use them.
-
-=item 5.
-
-Then go to authentication, and change "Treat application as a public client." to "yes".
-
-=back
-
-=head1 SEE ALSO
-
-=over 4
-
-=item App::wsgetmail::MS365::Client
-
-=item App::wsgetmail::MS365::Message
-
-=item L<https://docs.microsoft.com/en-gb/azure/active-directory/develop/quickstart-register-app>
-
-=back
+Best Practical Solutions, LLC <modules@bestpractical.com>
 
 =head1 LICENSE AND COPYRIGHT
 
-This software is Copyright (c) 2020 by Best Practical Solutions, LLC
+This software is Copyright (c) 2020 by Best Practical Solutions, LLC.
 
 This is free software, licensed under:
 
-  The Artistic License 2.0 (GPL Compatible)
-
+The GNU General Public License, Version 2, June 1991
 
 =cut
-
 
 1;
