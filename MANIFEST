@@ -1,12 +1,5 @@
 bin/wsgetmail
 Changes
-doc/activedirectory_setup.md
-doc/example.conf
-doc/register_api_app1.png
-doc/register_api_app2.png
-doc/register_api_app3.png
-doc/register_api_app4.png
-doc/register_api_app5.png
 inc/Module/Install.pm
 inc/Module/AutoInstall.pm
 inc/Module/Install/Base.pm
