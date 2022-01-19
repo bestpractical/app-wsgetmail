@@ -1,0 +1,6 @@
+.git/*
+.gitignore
+Makefile$
+MYMETA.*
+blib/*
+pm_to_blib
