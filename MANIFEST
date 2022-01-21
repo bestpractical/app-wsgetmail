@@ -1,7 +1,8 @@
 bin/wsgetmail.in
 Changes
-inc/Module/Install.pm
 inc/Module/AutoInstall.pm
+inc/Module/Install.pm
+inc/Module/Install/AutoInstall.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
 inc/Module/Install/Fetch.pm
@@ -9,12 +10,10 @@ inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
 inc/Module/Install/ReadmeFromPod.pm
-inc/Module/Install/Substitute.pm
 inc/Module/Install/Scripts.pm
+inc/Module/Install/Substitute.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
-inc/Module/Install/AutoInstall.pm
-inc/YAML/Tiny.pm
 INSTALL.SKIP
 lib/App/wsgetmail.pm
 lib/App/wsgetmail/MDA.pm
@@ -28,4 +27,7 @@ META.yml
 README.md
 t/00-load.t
 t/basic.t
+t/manifest.t
 t/mock_responses/messages.json
+t/pod-coverage.t
+t/pod.t
