@@ -27,12 +27,12 @@ where `wsgetmail.json` looks like:
 wsgetmail retrieves mail from a folder available through a web services API
 and delivers it to another system. Currently, it only knows how to retrieve
 mail from the Microsoft Graph API, and deliver it by running another command
-on the local system. It may grow to support other systems in the future.
+on the local system.
 
 # INSTALLATION
 
     perl Makefile.PL
-    make PERL_CANARY_STABILITY_NOPROMPT=1
+    make
     make test
     sudo make install
 
@@ -75,9 +75,21 @@ system Perl, or in the same directory as `perl` if you built your own.
 
 ## Configuring Microsoft 365 Client Access
 
-To use wsgetmail, first you need to set up the app in Microsoft 365. This
-section walks you through each piece of configuration wsgetmail needs, and
-how to obtain it.
+To use wsgetmail, first you need to set up the app in Microsoft 365.
+Two authentication methods are supported:
+
+- Client Credentials
+
+    This method uses shared secrets and is preferred method by Microsoft.
+    (See [Client credentials](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-authentication-flows#client-credentials))
+
+- Username/password
+
+    This method is more like previous connections via IMAP. It is currently
+    supported by Microsoft, but not recommended. (See [Username/password](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-authentication-flows#usernamepassword))
+
+This section walks you through each piece of configuration wsgetmail needs,
+and how to obtain it.
 
 - tenant\_id
 
@@ -149,9 +161,9 @@ a completely random string, not a UUID/GUID.
 ### Configuring user+password authentication
 
 If you do not want to use a client secret, you can also configure wsgetmail
-to authenticate with a traditional username+password combination. This is
-easier to set up initially, but harder to manage in the long run, because
-the password needs to be kept in sync across applications.
+to authenticate with a traditional username+password combination. As noted
+above, this method is not recommended by Microsoft. It also does not work
+for systems with federated authentication enabled.
 
 - global\_access
 
@@ -170,32 +182,32 @@ the password needs to be kept in sync across applications.
 ## Configuring the mail delivery command
 
 Now that you've configured wsgetmail to access a mail account, all that's
-left is configuring delivery.
+left is configuring delivery. Set the following in your wsgetmail
+configuration file.
 
 - folder
 
-    Set this to the name string of a mail folder to read in your wsgetmail
-    configuration file.
+    Set this to the name string of a mail folder to read.
 
 - command
 
-    Set this to executable command string in your wsgetmail configuration
-    file. You can specify an absolute path, or a plain command name which will
-    be found from `$PATH`. For each email wsgetmail retrieves, it will run this
-    command and pass the message data to it via standard input.
+    Set this to an executable command. You can specify an absolute path,
+    or a plain command name which will be found from `$PATH`. For each
+    email wsgetmail retrieves, it will run this command and pass the
+    message data to it via standard input.
 
 - command\_args
 
-    Set this to a string with additional arguments to call `command` with in
-    your wsgetmail configuration file. These arguments follow shell quoting
-    rules: you can escape characters with a backslash, and denote a single
-    string argument with single or double quotes.
+    Set this to a string with additional arguments to pass to `command`.
+    These arguments follow shell quoting rules: you can escape characters
+    with a backslash, and denote a single string argument with single or
+    double quotes.
 
 - action\_on\_fetched
 
-    Set this to a literal string `"mark_as_read"` or `"delete"` in your
-    wsgetmail configuration file. For each email wsgetmail retrieves, after the
-    configured delivery command succeeds, it will take this action on the message.
+    Set this to a literal string `"mark_as_read"` or `"delete"`.
+    For each email wsgetmail retrieves, after the configured delivery
+    command succeeds, it will take this action on the message.
 
     If you set this to `"mark_as_read"`, wsgetmail will only retrieve and
     deliver messages that are marked unread in the configured folder, so it does
@@ -217,6 +229,8 @@ periodically through cron or a systemd service on a timer.
 
 # LIMITATIONS
 
+## Fetching from Multiple Accounts
+
 wsgetmail can only read from a single folder each time it runs. If you need
 to read multiple folders (possibly spanning different accounts), then you
 need to run it multiple times with different configuration.
@@ -235,6 +249,13 @@ configuration, just run wsgetmail with different configurations:
 
     wsgetmail --config=account01.json
     wsgetmail --config=account02.json
+
+## Office 365 API Limits
+
+Microsoft applies some limits to the amount of API requests allowed as
+documented in their [Microsoft Graph throttling guidance](https://docs.microsoft.com/en-us/graph/throttling).
+If you reach a limit, requests to the API will start failing for a period
+of time.
 
 # AUTHOR
 
