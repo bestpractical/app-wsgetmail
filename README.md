@@ -80,7 +80,7 @@ Two authentication methods are supported:
 
 - Client Credentials
 
-    This method uses shared secrets and is preferred method by Microsoft.
+    This method uses shared secrets and is preferred by Microsoft.
     (See [Client credentials](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-authentication-flows#client-credentials))
 
 - Username/password

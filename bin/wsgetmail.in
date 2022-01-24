@@ -138,7 +138,7 @@ Two authentication methods are supported:
 
 =item Client Credentials
 
-This method uses shared secrets and is preferred method by Microsoft.
+This method uses shared secrets and is preferred by Microsoft.
 (See L<Client credentials|https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-authentication-flows#client-credentials>)
 
 =item Username/password
