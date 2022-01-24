@@ -229,7 +229,7 @@ periodically through cron or a systemd service on a timer.
 
 # LIMITATIONS
 
-## Fetching from Multiple Accounts
+## Fetching from Multiple Folders
 
 wsgetmail can only read from a single folder each time it runs. If you need
 to read multiple folders (possibly spanning different accounts), then you
