@@ -1,3 +1,4 @@
+#line 1
 package Module::Install::Scripts;
 
 use strict 'vars';

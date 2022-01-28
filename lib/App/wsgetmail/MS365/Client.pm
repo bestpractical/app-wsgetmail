@@ -1,8 +1,56 @@
+# BEGIN BPS TAGGED BLOCK {{{
+#
+# COPYRIGHT:
+#
+# This software is Copyright (c) 2020-2022 Best Practical Solutions, LLC
+#                                          <sales@bestpractical.com>
+#
+# (Except where explicitly superseded by other copyright notices)
+#
+#
+# LICENSE:
+#
+# This work is made available to you under the terms of Version 2 of
+# the GNU General Public License. A copy of that license should have
+# been provided with this software, but in any event can be snarfed
+# from www.gnu.org.
+#
+# This work is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301 or visit their web page on the internet at
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
+#
+#
+# CONTRIBUTION SUBMISSION POLICY:
+#
+# (The following paragraph is not intended to limit the rights granted
+# to you to modify and distribute this software under the terms of
+# the GNU General Public License and is only of importance to you if
+# you choose to contribute your changes and enhancements to the
+# community by submitting them to Best Practical Solutions, LLC.)
+#
+# By intentionally submitting any modifications, corrections or
+# derivatives to this work, or any other work intended for use with
+# Request Tracker, to Best Practical Solutions, LLC, you confirm that
+# you are the copyright holder for those contributions and you grant
+# Best Practical Solutions,  LLC a nonexclusive, worldwide, irrevocable,
+# royalty-free, perpetual, license to use, copy, create derivative
+# works based on those contributions, and sublicense and distribute
+# those contributions and any derivatives thereof.
+#
+# END BPS TAGGED BLOCK }}}
+
 package App::wsgetmail::MS365::Client;
 
 =head1 NAME
 
-App::wsgetmail::MS365 - Fetch mail from Microsoft 365
+App::wsgetmail::MS365::Client - Low-level client to the Microsoft Graph API
 
 =cut
 
@@ -15,25 +63,17 @@ use Azure::AD::ClientCredentials;
 
 =head1 DESCRIPTION
 
-Fetch mail from Microsoft 365 mailboxes using the Graph REST API
+This class performs the actual REST requests to support
+L<App::wsgetmail::MS365>.
 
 =head1 ATTRIBUTES
 
+The following attributes are received from L<App::wsgetmail::MS365> and have
+the same meaning:
+
 =over 4
 
-=item secret
-
-=item client_id
-
-=item tenant_id
-
-=item username
-
-=item user_password
-
-=item global_access
-
-=back
+=item * secret
 
 =cut
 
@@ -42,35 +82,71 @@ has secret  => (
     required => 0,
 );
 
+=item * client_id
+
+=cut
+
 has client_id => (
     is => 'ro',
     required => 1,
 );
+
+=item * tenant_id
+
+=cut
 
 has tenant_id => (
     is => 'ro',
     required => 1,
 );
 
+=item * username
+
+=cut
+
 has username => (
     is => 'ro',
     required => 0
 );
+
+=item * user_password
+
+=cut
 
 has user_password => (
     is => 'ro',
     required => 0
 );
 
+=item * global_access
+
+=item * debug
+
+=cut
+
 has global_access => (
     is => 'ro',
     default => sub { return 0 }
 );
 
+=back
+
+=head2 resource_url
+
+A string with the URL for the overall API endpoint.
+
+=cut
+
 has resource_url => (
     is => 'ro',
     default => sub { return 'https://graph.microsoft.com/' }
 );
+
+=head2 resource_path
+
+A string with the REST API endpoint URL path.
+
+=cut
 
 has resource_path => (
     is => 'ro',
@@ -118,7 +194,10 @@ sub BUILD {
 
 =head1 METHODS
 
-=head2 build_rest_uir
+=head2 build_rest_uri(@endpoint_parts)
+
+Given a list of URL component strings, returns a complete URL string to
+reach that endpoint from this object's C<resource_url> and C<resource_path>.
 
 =cut
 
@@ -128,7 +207,11 @@ sub build_rest_uri {
     return join('/', $base_url, @endpoint_parts);
 }
 
-=head2 get_request
+=head2 get_request($parts, $params)
+
+Makes a GET request to the API. C<$parts> is an arrayref of URL endpoint
+strings with the specific endpoint to request. C<$params> is a hashref of
+query parameters to send with the request.
 
 =cut
 
@@ -141,7 +224,9 @@ sub get_request {
     return $self->_ua->get($uri);
 }
 
-=head2 get_request_by_url
+=head2 get_request_by_url($url)
+
+Makes a GET request to the URL in the C<$url> string.
 
 =cut
 
@@ -151,7 +236,10 @@ sub get_request_by_url {
     return $self->_ua->get($url);
 }
 
-=head2 delete_request
+=head2 delete_request($parts, $params)
+
+Makes a DELETE request to the API. C<$parts> is an arrayref of URL endpoint
+strings with the specific endpoint to request. C<$params> is unused.
 
 =cut
 
@@ -162,7 +250,11 @@ sub delete_request {
     return $self->_ua->delete($url);
 }
 
-=head2 post_request
+=head2 post_request($path_parts, $post_data)
+
+Makes a POST request to the API. C<$path_parts> is an arrayref of URL
+endpoint strings with the specific endpoint to request. C<$post_data> is a
+reference to an array or hash of data to include in the POST request body.
 
 =cut
 
@@ -173,7 +265,11 @@ sub post_request {
     return $self->_ua->post($url,$post_data);
 }
 
-=head2 patch_request
+=head2 patch_request($path_parts, $patch_params)
+
+Makes a PATCH request to the API. C<$path_parts> is an arrayref of URL
+endpoint strings with the specific endpoint to request. C<$patch_params> is
+a hashref of data to include in the PATCH request body.
 
 =cut
 
@@ -255,9 +351,13 @@ sub _new_useragent {
 
 =over 4
 
-=item App::wsgetmail::MS365
+=item * L<App::wsgetmail::MS365>
 
 =back
+
+=head1 AUTHOR
+
+Best Practical Solutions, LLC <modules@bestpractical.com>
 
 =head1 LICENSE AND COPYRIGHT
 
@@ -265,10 +365,8 @@ This software is Copyright (c) 2020 by Best Practical Solutions, LLC
 
 This is free software, licensed under:
 
-  The Artistic License 2.0 (GPL Compatible)
-
+  The GNU General Public License, Version 2, June 1991
 
 =cut
-
 
 1;

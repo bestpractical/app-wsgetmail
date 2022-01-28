@@ -1,3 +1,51 @@
+# BEGIN BPS TAGGED BLOCK {{{
+#
+# COPYRIGHT:
+#
+# This software is Copyright (c) 2020-2022 Best Practical Solutions, LLC
+#                                          <sales@bestpractical.com>
+#
+# (Except where explicitly superseded by other copyright notices)
+#
+#
+# LICENSE:
+#
+# This work is made available to you under the terms of Version 2 of
+# the GNU General Public License. A copy of that license should have
+# been provided with this software, but in any event can be snarfed
+# from www.gnu.org.
+#
+# This work is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301 or visit their web page on the internet at
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
+#
+#
+# CONTRIBUTION SUBMISSION POLICY:
+#
+# (The following paragraph is not intended to limit the rights granted
+# to you to modify and distribute this software under the terms of
+# the GNU General Public License and is only of importance to you if
+# you choose to contribute your changes and enhancements to the
+# community by submitting them to Best Practical Solutions, LLC.)
+#
+# By intentionally submitting any modifications, corrections or
+# derivatives to this work, or any other work intended for use with
+# Request Tracker, to Best Practical Solutions, LLC, you confirm that
+# you are the copyright holder for those contributions and you grant
+# Best Practical Solutions,  LLC a nonexclusive, worldwide, irrevocable,
+# royalty-free, perpetual, license to use, copy, create derivative
+# works based on those contributions, and sublicense and distribute
+# those contributions and any derivatives thereof.
+#
+# END BPS TAGGED BLOCK }}}
+
 package App::wsgetmail::MS365;
 
 =head1 NAME
@@ -13,6 +61,18 @@ use App::wsgetmail::MS365::Client;
 use App::wsgetmail::MS365::Message;
 use File::Temp;
 
+=head1 SYNOPSIS
+
+    my $ms365 = App::wsgetmail::MS365->new({
+      client_id => "client UUID",
+      tenant_id => "tenant UUID",
+      secret => "random secret token",
+      global_access => 1,
+      folder => "Inbox",
+      post_fetch_action => "mark_message_as_read",
+      debug => 0,
+    })
+
 =head1 DESCRIPTION
 
 Moo class providing methods to connect to and fetch mail from Microsoft 365
@@ -20,23 +80,14 @@ Moo class providing methods to connect to and fetch mail from Microsoft 365
 
 =head1 ATTRIBUTES
 
-=over 4
+You must provide C<client_id>, C<tenant_id>, C<post_fetch_action>, and
+authentication details. If C<global_access> is false (the default), you must
+provide C<username> and C<user_password>. If you set C<global_access> to a
+true value, you must provide C<secret>.
 
-=item client_id
+=head2 client_id
 
-=item tenant_id
-
-=item username
-
-=item user_password
-
-=item global_access
-
-=item secret
-
-=item folder
-
-=back
+A string with the UUID of the client application to use for authentication.
 
 =cut
 
@@ -45,20 +96,47 @@ has client_id => (
     required => 1,
 );
 
+=head2 tenant_id
+
+A string with the UUID of your Microsoft 365 tenant to use for authentication.
+
+=cut
+
 has tenant_id => (
     is => 'ro',
     required => 1,
 );
+
+=head2 username
+
+A string with a username email address. If C<global_access> is false (the
+default), the client authenticates with this username. If C<global_access>
+is true, the client accesses this user's mailboxes.
+
+=cut
 
 has username => (
     is => 'ro',
     required => 0
 );
 
+=head2 user_password
+
+A string with the user password to use for authentication without global
+access.
+
+=cut
+
 has user_password => (
     is => 'ro',
     required => 0
 );
+
+=head2 folder
+
+A string with the name of the email folder to read. Default "Inbox".
+
+=cut
 
 has folder => (
     is => 'ro',
@@ -66,20 +144,52 @@ has folder => (
     default => sub { 'Inbox' }
 );
 
+=head2 global_access
+
+A boolean. If false (the default), the client will authenticate using
+C<username> and C<user_password>. If true, the client will authenticate
+using its C<secret> token.
+
+=cut
+
 has global_access => (
     is => 'ro',
     default => sub { return 0 }
 );
+
+=head2 secret
+
+A string with the client secret to use for global authentication. This
+should look like a long string of completely random characters, not a UUID
+or other recognizable format.
+
+=cut
 
 has secret => (
     is => 'ro',
     required => 0,
 );
 
+=head2 post_fetch_action
+
+A string with the name of a method to call after reading a message. You
+probably want to pass either "mark_message_as_read" or "delete_message". In
+principle, you can pass the name of any method that accepts a message ID
+string argument.
+
+=cut
+
 has post_fetch_action => (
     is => 'ro',
     required => 1
 );
+
+=head2 debug
+
+A boolean. If true, the object will issue a warning with details about each
+request it issues.
+
+=cut
 
 has debug => (
     is => 'rw',
@@ -332,76 +442,18 @@ sub _build_client {
 
 }
 
-=head1 CONFIGURATION
+=head1 AUTHOR
 
-=head2 Setting up mail API integration in microsoft365
-
-Active Directory application configuration
-
-From Azure Active directory admin center.
-
-=over 4
-
-=item 1.
-
-Go to App Registrations and then "New registration", select single tenant and register.
-
-=item 2.
-
-Go to certificates and secrets, add a new client secret.
-
-=item 3.
-
-Go to API permissions and add the following delegated rights for Microsoft Graph:
-
-=over 6
-
-=item * Mail.Read Delegated right
-
-=item * Mail.Read.Shared Delegated right
-
-=item * Mail.ReadWrite Delegated right
-
-=item * Mail.ReadWrite.Shared Delegated right
-
-=item * openid  Delegated right
-
-=item * User.Read  Delegated right
-
-=back
-
-=item 4.
-
-Once the rights have been added, grant admin consent to allow the API client to use them.
-
-=item 5.
-
-Then go to authentication, and change "Treat application as a public client." to "yes".
-
-=back
-
-=head1 SEE ALSO
-
-=over 4
-
-=item App::wsgetmail::MS365::Client
-
-=item App::wsgetmail::MS365::Message
-
-=item L<https://docs.microsoft.com/en-gb/azure/active-directory/develop/quickstart-register-app>
-
-=back
+Best Practical Solutions, LLC <modules@bestpractical.com>
 
 =head1 LICENSE AND COPYRIGHT
 
-This software is Copyright (c) 2020 by Best Practical Solutions, LLC
+This software is Copyright (c) 2020 by Best Practical Solutions, LLC.
 
 This is free software, licensed under:
 
-  The Artistic License 2.0 (GPL Compatible)
-
+The GNU General Public License, Version 2, June 1991
 
 =cut
-
 
 1;
