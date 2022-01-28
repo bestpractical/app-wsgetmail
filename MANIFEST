@@ -25,7 +25,7 @@ Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
 META.yml
-README
+README.md
 t/00-load.t
 t/basic.t
 t/mock_responses/messages.json

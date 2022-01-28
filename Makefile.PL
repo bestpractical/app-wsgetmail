@@ -1,6 +1,7 @@
 use lib qw(.);
 use Config;
 use inc::Module::Install;
+readme_from 'bin/wsgetmail.in', 0, 'md';
 all_from 'lib/App/wsgetmail.pm';
 license 'gpl_2';
 
