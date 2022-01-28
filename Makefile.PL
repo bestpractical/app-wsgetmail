@@ -1,4 +1,5 @@
 use lib qw(.);
+use Config;
 use inc::Module::Install;
 all_from 'lib/App/wsgetmail.pm';
 license 'gpl_2';
@@ -21,6 +22,19 @@ requires 'Test::More';
 requires 'URI::Escape';
 requires 'URI';
 requires 'warnings';
+
+my $secure_perl_path = $Config{perlpath};
+if ($^O ne 'VMS' and $secure_perl_path !~ /$Config{_exe}$/i) {
+    $secure_perl_path .= $Config{_exe};
+}
+
+substitute(
+    {
+        PERL => $ENV{PERL} || $secure_perl_path,
+    },
+    { sufix => '.in' },
+    'bin/wsgetmail',
+);
 
 install_script('bin/wsgetmail');
 auto_install();

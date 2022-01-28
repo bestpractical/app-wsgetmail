@@ -1,4 +1,4 @@
-bin/wsgetmail
+bin/wsgetmail.in
 Changes
 inc/Module/Install.pm
 inc/Module/AutoInstall.pm
@@ -15,6 +15,7 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 inc/Module/Install/AutoInstall.pm
 inc/YAML/Tiny.pm
+INSTALL.SKIP
 lib/App/wsgetmail.pm
 lib/App/wsgetmail/MDA.pm
 lib/App/wsgetmail/MS365.pm
