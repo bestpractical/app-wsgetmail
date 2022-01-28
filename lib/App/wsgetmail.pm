@@ -12,50 +12,52 @@ App::wsgetmail - Fetch mail from the cloud using webservices
 
 0.03
 
-=head1 DESCRIPTION
-
-A simple command line application/script to fetch mail from the cloud
-using webservices instead of IMAP and POP.
-
-Configurable to mark fetched mail as read, or to delete it, and with
-configurable action with the fetched email.
-
 =head1 SYNOPSIS
 
-wsgetmail365 --configuration path/to/file.json [--debug] [ --dry-run]
+If you just want to run wsgetmail on the command line, the L<wsgetmail>
+documentation page provides full documentation for how to configure and run
+it, including how to configure the app in your cloud environment. Run:
 
-=head1 CONFIGURATION
+    wsgetmail [options] --config=wsgetmail.json
 
-Configuration of the wsgetmail tool needs the following fields specific to the ms365 application:
-Application (client) ID,
-Directory (tenant) ID
+where C<wsgetmail.json> looks like:
 
-For access to the email account you need:
-Account email address
-Account password
-Folder (defaults to inbox, currently only one folder is supported)
+    {
+    "client_id": "abcd1234-xxxx-xxxx-xxxx-1234abcdef99",
+    "tenant_id": "abcd1234-xxxx-xxxx-xxxx-123abcde1234",
+    "secret": "abcde1fghij2klmno3pqrst4uvwxy5~0",
+    "global_access": 1,
+    "username": "rt-comment@example.com",
+    "folder": "Inbox",
+    "command": "/opt/rt5/bin/rt-mailgate",
+    "command_args": "--url=http://rt.example.com/ --queue=General --action=comment",
+    "action_on_fetched": "mark_as_read"
+    }
 
-For forwarding to RT via rt-mailgate you need :
-RT URL
-Path to rt-mailgate
-Recipient address (usually same as account email address, could be a shared mailbox or alias)
-action on fetching mail : either "mark_as_read" or "delete"
+Using App::wsgetmail as a library looks like:
 
-example configuration :
-{
-   "command": "/path/to/rt/bin/rt-mailgate",
-   "command_args": "--url http://rt.example.tld/ --queue general --action correspond",
-   "command_timeout": 15,
-   "recipient":"rt@example.tld",
-   "action_on_fetched":"mark_as_read",
-   "username":"rt@example.tld",
-   "user_password":"password",
-   "tenant_id":"abcd1234-xxxx-xxxx-xxxx-123abcde1234",
-   "client_id":"abcd1234-xxxx-xxxx-xxxx-1234abcdef99",
-   "folder":"Inbox"
-}
+    my $getmail = App::wsgetmail->new({config => {
+      # The config hashref takes all the same keys and values as the
+      # command line tool configuration JSON.
+    }});
+    while (my $message = $getmail->get_next_message()) {
+        $getmail->process_message($message)
+          or warn "could not process $message->id";
+    }
 
-an example configuration file is included in the docs/ directory of this package
+=head1 DESCRIPTION
+
+wsgetmail retrieves mail from a folder available through a web services API
+and delivers it to another system. Currently, it only knows how to retrieve
+mail from the Microsoft Graph API, and deliver it by running another command
+on the local system. It may grow to support other systems in the future.
+
+=head1 INSTALLATION
+
+    perl Makefile.PL
+    make PERL_CANARY_STABILITY_NOPROMPT=1
+    make test
+    sudo make install
 
 =cut
 
@@ -63,10 +65,24 @@ use Clone 'clone';
 use Module::Load;
 use App::wsgetmail::MDA;
 
+=head1 ATTRIBUTES
+
+=head2 config
+
+A hash ref that is passed to construct the C<mda> and C<client> (see below).
+
+=cut
+
 has config => (
     is => 'ro',
     required => 1
 );
+
+=head2 mda
+
+An instance of L<App::wsgetmail::MDA> created from our C<config> object.
+
+=cut
 
 has mda => (
     is => 'rw',
@@ -75,11 +91,23 @@ has mda => (
     builder => '_build_mda'
 );
 
+=head2 client_class
+
+The name of the App::wsgetmail package used to construct the
+C<client>. Default C<MS365>.
+
+=cut
 
 has client_class => (
     is => 'ro',
     default => sub { 'MS365' }
 );
+
+=head2 client
+
+An instance of the C<client_class> created from our C<config> object.
+
+=cut
 
 has client => (
     is => 'ro',
@@ -115,6 +143,15 @@ sub _build__post_fetch_action {
     return $fetched_action_method;
 }
 
+=head1 METHODS
+
+=head2 process_message($message)
+
+Given a Message object, retrieves the full message content, delivers it
+using the C<mda>, and then executes the configured post-fetch
+action. Returns a boolean indicating success.
+
+=cut
 
 sub process_message {
     my ($self, $message) = @_;
@@ -136,6 +173,13 @@ sub process_message {
     }
     return $ok;
 }
+
+=head2 post_fetch_action($message)
+
+Given a Message object, executes the configured post-fetch action. Returns a
+boolean indicating success.
+
+=cut
 
 sub post_fetch_action {
     my ($self, $message) = @_;
@@ -173,20 +217,17 @@ sub _build_mda {
     return App::wsgetmail::MDA->new($config);
 }
 
-
-
-##
-
-
 =head1 SEE ALSO
 
 =over 4
 
-=item App::wsgetmail::MDA
+=item * L<wsgetmail>
 
-=item App::wsgetmail::MS365
+=item * L<App::wsgetmail::MDA>
 
-=item wsgemail365
+=item * L<App::wsgetmail::MS365>
+
+=item * L<App::wsgetmail::MS365::Message>
 
 =back
 
