@@ -50,7 +50,7 @@ package App::wsgetmail;
 
 use Moo;
 
-our $VERSION = '0.03';
+our $VERSION = '0.05';
 
 =head1 NAME
 
@@ -58,7 +58,7 @@ App::wsgetmail - Fetch mail from the cloud using webservices
 
 =head1 VERSION
 
-0.03
+0.05
 
 =head1 SYNOPSIS
 
