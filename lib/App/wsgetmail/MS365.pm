@@ -46,6 +46,8 @@
 #
 # END BPS TAGGED BLOCK }}}
 
+use v5.10;
+
 package App::wsgetmail::MS365;
 
 =head1 NAME

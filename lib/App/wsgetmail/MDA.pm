@@ -67,6 +67,8 @@ another command via standard input.
 
 =cut
 
+use v5.10;
+
 package App::wsgetmail::MDA;
 use Moo;
 
