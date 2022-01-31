@@ -1,7 +1,7 @@
 use lib qw(.);
 use Config;
 use inc::Module::Install;
-readme_from 'bin/wsgetmail.in', 0, 'md';
+readme_from 'bin/wsgetmail', 0, 'md';
 all_from 'lib/App/wsgetmail.pm';
 license 'gpl_2';
 
@@ -33,7 +33,6 @@ substitute(
     {
         PERL => $ENV{PERL} || $secure_perl_path,
     },
-    { sufix => '.in' },
     'bin/wsgetmail',
 );
 
