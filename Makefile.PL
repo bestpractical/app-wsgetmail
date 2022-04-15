@@ -5,6 +5,8 @@ readme_from 'bin/wsgetmail', 0, 'md';
 all_from 'lib/App/wsgetmail.pm';
 license 'gpl_2';
 
+perl_version '5.010';
+
 requires 'Azure::AD::ClientCredentials';
 requires 'Clone';
 requires 'FindBin';
