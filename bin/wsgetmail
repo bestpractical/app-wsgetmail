@@ -230,9 +230,10 @@ string in your configuration file.
 After that is done, you need to grant wsgetmail permission to access the
 Microsoft Graph mail APIs. Microsoft documents how to do this in the
 L<"Configure a client application to access a web API"
-quickstart|https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-access-web-apis#add-permissions-to-access-microsoft-graph>,
-under the section "Add permissions to access Microsoft Graph." When prompted
-to select permissions, select all of the following:
+quickstart|https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-access-web-apis#application-permission-to-microsoft-graph>,
+under the section "Add permissions to access Microsoft Graph." When selecting
+the type of permissions, select "Application permissions." When prompted to
+select permissions, select all of the following:
 
 =over 4
 
