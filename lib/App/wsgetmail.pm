@@ -46,6 +46,8 @@
 #
 # END BPS TAGGED BLOCK }}}
 
+use v5.10;
+
 package App::wsgetmail;
 
 use Moo;
@@ -98,12 +100,12 @@ Using App::wsgetmail as a library looks like:
 wsgetmail retrieves mail from a folder available through a web services API
 and delivers it to another system. Currently, it only knows how to retrieve
 mail from the Microsoft Graph API, and deliver it by running another command
-on the local system. It may grow to support other systems in the future.
+on the local system.
 
 =head1 INSTALLATION
 
     perl Makefile.PL
-    make PERL_CANARY_STABILITY_NOPROMPT=1
+    make
     make test
     sudo make install
 

@@ -16,4 +16,3 @@ pod2htm*.tmp
 pm_to_blib
 App-wsgetmail-*
 App-wsgetmail-*.tar.gz
-bin/wsgetmail
