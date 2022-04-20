@@ -19,6 +19,7 @@ where `wsgetmail.json` looks like:
     "folder": "Inbox",
     "command": "/opt/rt5/bin/rt-mailgate",
     "command_args": "--url=http://rt.example.com/ --queue=General --action=comment",
+    "command_timeout": 30,
     "action_on_fetched": "mark_as_read"
     }
 
@@ -214,6 +215,11 @@ configuration file.
     These arguments follow shell quoting rules: you can escape characters
     with a backslash, and denote a single string argument with single or
     double quotes.
+
+- command\_timeout
+
+    Set this to the number of seconds the `command` has to return before
+    timeout is reached.  The default value is 30.
 
 - action\_on\_fetched
 
