@@ -229,7 +229,16 @@ my @config_fields = qw(client_id tenant_id username user_password global_access 
 around BUILDARGS => sub {
   my ( $orig, $class, $config ) = @_;
 
-  my $attributes = { map { $_ => $config->{$_} } @config_fields };
+    my $attributes = {
+        map {
+            $_ => $config->{$_}
+        }
+        grep {
+            defined $config->{$_}
+        }
+        @config_fields
+    };
+
   return $class->$orig($attributes);
 };
 

@@ -158,7 +158,17 @@ has debug => (
 my @config_fields = qw( command command_args command_timeout debug );
 around BUILDARGS => sub {
     my ( $orig, $class, $config ) = @_;
-    my $attributes = { map { $_ => $config->{$_} } @config_fields };
+
+    my $attributes = {
+        map {
+            $_ => $config->{$_}
+        }
+        grep {
+            defined $config->{$_}
+        }
+        @config_fields
+    };
+
     return $class->$orig($attributes);
 };
 
@@ -187,6 +197,7 @@ sub _run_command {
         warn "no action to delivery message, command option is empty or null" if ($self->debug);
         return 1;
     }
+
     my $ok = run ([ $self->command, _split_command_args($self->command_args, 1)], $fh, \$output, \$error, timeout( $self->command_timeout + 5 ) );
     unless ($ok) {
         warn sprintf('failed to run command "%s %s" for file %s : %s',
