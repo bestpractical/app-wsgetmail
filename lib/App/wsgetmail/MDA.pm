@@ -154,8 +154,6 @@ has debug => (
 );
 
 
-
-my @config_fields = qw( command command_args command_timeout debug );
 around BUILDARGS => sub {
     my ( $orig, $class, $config ) = @_;
 
@@ -166,7 +164,7 @@ around BUILDARGS => sub {
         grep {
             defined $config->{$_}
         }
-        @config_fields
+        qw(command command_args command_timeout debug)
     };
 
     return $class->$orig($attributes);

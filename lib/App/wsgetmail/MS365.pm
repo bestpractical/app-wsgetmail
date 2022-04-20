@@ -225,7 +225,6 @@ has _next_fetch_url => (
 );
 
 
-my @config_fields = qw(client_id tenant_id username user_password global_access secret folder post_fetch_action debug);
 around BUILDARGS => sub {
     my ( $orig, $class, $config ) = @_;
 
@@ -236,7 +235,7 @@ around BUILDARGS => sub {
         grep {
             defined $config->{$_}
         }
-        @config_fields
+        qw(client_id tenant_id username user_password global_access secret folder post_fetch_action debug)
     };
 
     return $class->$orig($attributes);
