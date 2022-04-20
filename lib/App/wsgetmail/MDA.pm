@@ -154,6 +154,9 @@ has debug => (
 );
 
 
+# this sets the attributes in the object using values from the config.
+# if no value is defined in the config, the attribute's "default" is used
+# instead (if defined).
 around BUILDARGS => sub {
     my ( $orig, $class, $config ) = @_;
 
