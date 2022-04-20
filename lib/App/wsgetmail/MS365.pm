@@ -227,7 +227,7 @@ has _next_fetch_url => (
 
 my @config_fields = qw(client_id tenant_id username user_password global_access secret folder post_fetch_action debug);
 around BUILDARGS => sub {
-  my ( $orig, $class, $config ) = @_;
+    my ( $orig, $class, $config ) = @_;
 
     my $attributes = {
         map {
@@ -239,7 +239,7 @@ around BUILDARGS => sub {
         @config_fields
     };
 
-  return $class->$orig($attributes);
+    return $class->$orig($attributes);
 };
 
 
