@@ -58,10 +58,6 @@ our $VERSION = '0.05';
 
 App::wsgetmail - Fetch mail from the cloud using webservices
 
-=head1 VERSION
-
-0.05
-
 =head1 SYNOPSIS
 
 Run:
