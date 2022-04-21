@@ -225,12 +225,23 @@ has _next_fetch_url => (
 );
 
 
-my @config_fields = qw(client_id tenant_id username user_password global_access secret folder post_fetch_action debug);
+# this sets the attributes in the object using values from the config.
+# if no value is defined in the config, the attribute's "default" is used
+# instead (if defined).
 around BUILDARGS => sub {
-  my ( $orig, $class, $config ) = @_;
+    my ( $orig, $class, $config ) = @_;
 
-  my $attributes = { map { $_ => $config->{$_} } @config_fields };
-  return $class->$orig($attributes);
+    my $attributes = {
+        map {
+            $_ => $config->{$_}
+        }
+        grep {
+            defined $config->{$_}
+        }
+        qw(client_id tenant_id username user_password global_access secret folder post_fetch_action debug)
+    };
+
+    return $class->$orig($attributes);
 };
 
 

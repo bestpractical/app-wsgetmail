@@ -120,6 +120,7 @@ where C<wsgetmail.json> looks like:
     "folder": "Inbox",
     "command": "/opt/rt5/bin/rt-mailgate",
     "command_args": "--url=http://rt.example.com/ --queue=General --action=comment",
+    "command_timeout": 30,
     "action_on_fetched": "mark_as_read"
     }
 

@@ -75,6 +75,7 @@ where C<wsgetmail.json> looks like:
     "folder": "Inbox",
     "command": "/opt/rt5/bin/rt-mailgate",
     "command_args": "--url=http://rt.example.com/ --queue=General --action=comment",
+    "command_timeout": 30,
     "action_on_fetched": "mark_as_read"
     }
 
@@ -423,6 +424,11 @@ Set this to a string with additional arguments to pass to C<command>.
 These arguments follow shell quoting rules: you can escape characters
 with a backslash, and denote a single string argument with single or
 double quotes.
+
+=item command_timeout
+
+Set this to the number of seconds the C<command> has to return before
+timeout is reached.  The default value is 30.
 
 =item action_on_fetched
 
