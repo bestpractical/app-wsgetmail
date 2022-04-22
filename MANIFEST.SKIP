@@ -1,9 +1,9 @@
-.git/*
+.git/.*
 .gitignore
 Makefile$
 MYMETA.*
-blib/*
+blib/.*
 pm_to_blib
-*.swp
-*.swo
+.*.swp
+.*.swo
 wsgetmail.json
