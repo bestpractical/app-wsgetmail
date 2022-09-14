@@ -1,6 +1,7 @@
 Revision history for App-wsgetmail
 
 0.07    ??/??/??
+        * Remove '+ 5' adjustment to timeout in MDA.pm
         * Remove interpreter substitution for wsgetmail
 
 0.06    22/04/22

@@ -428,7 +428,7 @@ double quotes.
 =item command_timeout
 
 Set this to the number of seconds the C<command> has to return before
-timeout is reached.  The default value is 30.
+timeout is reached.  The default value is 30.  Use "inf" for no timeout.
 
 =item action_on_fetched
 

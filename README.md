@@ -59,7 +59,7 @@ A hash ref that is passed to construct the `mda` and `client` (see below).
 
 ## mda
 
-An instance of [App::wsgetmail::MDA](https://metacpan.org/pod/App::wsgetmail::MDA) created from our `config` object.
+An instance of [App::wsgetmail::MDA](https://metacpan.org/pod/App%3A%3Awsgetmail%3A%3AMDA) created from our `config` object.
 
 ## client\_class
 
@@ -219,7 +219,7 @@ configuration file.
 - command\_timeout
 
     Set this to the number of seconds the `command` has to return before
-    timeout is reached.  The default value is 30.
+    timeout is reached.  The default value is 30.  Use 'inf' for no timeout.
 
 - action\_on\_fetched
 
@@ -278,9 +278,9 @@ of time.
 # SEE ALSO
 
 - [wsgetmail](https://metacpan.org/pod/wsgetmail)
-- [App::wsgetmail::MDA](https://metacpan.org/pod/App::wsgetmail::MDA)
-- [App::wsgetmail::MS365](https://metacpan.org/pod/App::wsgetmail::MS365)
-- [App::wsgetmail::MS365::Message](https://metacpan.org/pod/App::wsgetmail::MS365::Message)
+- [App::wsgetmail::MDA](https://metacpan.org/pod/App%3A%3Awsgetmail%3A%3AMDA)
+- [App::wsgetmail::MS365](https://metacpan.org/pod/App%3A%3Awsgetmail%3A%3AMS365)
+- [App::wsgetmail::MS365::Message](https://metacpan.org/pod/App%3A%3Awsgetmail%3A%3AMS365%3A%3AMessage)
 
 # AUTHOR
 
