@@ -1,5 +1,8 @@
 Revision history for App-wsgetmail
 
+0.07    ??/??/??
+        * Remove interpreter substitution for wsgetmail
+
 0.06    22/04/22
         * Update 0.05 Changes to conform to spec
         * Sync module pod with recent changes in script
