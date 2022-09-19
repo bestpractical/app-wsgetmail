@@ -449,6 +449,12 @@ If you set this to C<"mark_as_read">, wsgetmail will only retrieve and
 deliver messages that are marked unread in the configured folder, so it does
 not try to deliver the same email multiple times.
 
+=item dump_messages
+
+Set this to 1 to preserve the temporary files after processing.
+
+When C<"debug"> is also set the filenames will be reported on STDERR.
+
 =back
 
 =head1 TESTING AND DEPLOYMENT

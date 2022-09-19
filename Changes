@@ -1,6 +1,7 @@
 Revision history for App-wsgetmail
 
 0.07    ??/??/??
+        * Add documentation of the dump_messages option
         * Add strip_cr option to convert CRLF -> LF
         * Add locking based on the username/folder
         * Remove '+ 5' adjustment to timeout in MDA.pm
