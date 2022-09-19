@@ -186,6 +186,18 @@ has post_fetch_action => (
     required => 1
 );
 
+=head2 strip_cr
+
+A boolean.  If true, the message content will have CRLF line terminators
+converted to LF line terminators.
+
+=cut
+
+has strip_cr => (
+    is => 'ro',
+    required => 0,
+);
+
 =head2 debug
 
 A boolean. If true, the object will issue a warning with details about each
@@ -238,7 +250,7 @@ around BUILDARGS => sub {
         grep {
             defined $config->{$_}
         }
-        qw(client_id tenant_id username user_password global_access secret folder post_fetch_action debug)
+        qw(client_id tenant_id username user_password global_access secret folder post_fetch_action strip_cr debug)
     };
 
     return $class->$orig($attributes);
@@ -296,7 +308,9 @@ sub get_message_mime_content {
 
     # can we just write straight to file from response?
     my $tmp = File::Temp->new( UNLINK => 0, SUFFIX => '.mime' );
-    print $tmp $response->content;
+    my $content = $response->content;
+    $content =~ s/\r$//mg if $self->strip_cr;
+    print $tmp $content;
     return $tmp->filename;
 }
 

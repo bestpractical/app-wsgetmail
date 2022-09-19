@@ -73,6 +73,7 @@ where C<wsgetmail.json> looks like:
     "global_access": 1,
     "username": "rt-comment@example.com",
     "folder": "Inbox",
+    "strip_cr": 0,
     "command": "/opt/rt5/bin/rt-mailgate",
     "command_args": "--url=http://rt.example.com/ --queue=General --action=comment",
     "command_timeout": 30,
@@ -410,6 +411,14 @@ configuration file.
 =item folder
 
 Set this to the name string of a mail folder to read.
+
+=item strip_cr
+
+Set this to 1 to make wsgetmail convert the messages from the CRLF
+line-ending encoding to the LF line-ending encoding.
+
+This is technically not standards-compliant, but some unix utilities
+don't work with CRLF line-endings.
 
 =item command
 
