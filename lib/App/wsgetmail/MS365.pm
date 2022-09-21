@@ -325,7 +325,7 @@ sub delete_message {
     my @path_parts = ($self->global_access) ? ('users', $self->username, 'messages', $message_id) : ('me', 'messages', $message_id);
     my $response = $self->_client->delete_request([@path_parts]);
     unless ($response->is_success) {
-        warn "failed to mark message as read " . $response->status_line;
+        warn "failed to delete message " . $response->status_line;
         warn "response from server : " . $response->content if $self->debug;
     }
 
