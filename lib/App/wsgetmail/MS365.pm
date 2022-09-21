@@ -415,8 +415,7 @@ sub _get_message_list {
 
     my $folder = $self->get_folder_details;
     unless ($folder) {
-        warn "unable to fetch messages, can't find folder " . $self->folder;
-        return { '@odata.count' => 0, value => [ ] };
+        die "unable to fetch messages, can't find folder " . $self->folder;
     }
 
     # don't request list if folder has no items
