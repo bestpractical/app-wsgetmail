@@ -98,15 +98,22 @@ my $getmail = App::wsgetmail->new({config => $config});
 
 print "\nfetching mail using configuration $config_file\n";
 
-my $count = 0;
+my $done_count = 0;
+my $error_count = 0;
 
 while (my $message = $getmail->get_next_message()) {
     my $ok = $getmail->process_message($message);
-    $count++ if ($ok);
+    if ($ok) {
+        $done_count++;
+    }
+    else {
+        $error_count++;
+    }
 }
 
-print "\nprocessed $count messages\n";
+print "\nprocessed $done_count messages\n";
 
+die "there were errors with $error_count messages\n" if $error_count;
 
 __END__
 

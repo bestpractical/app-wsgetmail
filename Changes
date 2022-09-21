@@ -1,6 +1,7 @@
 Revision history for App-wsgetmail
 
 0.07    ??/??/??
+        * Count and report messages with errors in post-fetch processing
         * Upgrade failure to fetch folder details to a fatal error
           from a warning and successful exit code.
         * Correct error message for issues with deleting messages
