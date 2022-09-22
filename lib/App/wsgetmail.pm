@@ -471,6 +471,20 @@ runs successfully.
 Once your configuration is stable, you can configure wsgetmail to run
 periodically through cron or a systemd service on a timer.
 
+=head1 ERRORS AND DIAGNOSTIC MESSAGES
+
+wsgetmail sends warning, error, and debug messages to STDERR, while purely
+informational messages are sent to STDOUT.  Operators may want to capture both
+output streams as a merged stream for diagnostic purposes.  For example:
+
+    wsgetmail --debug --dry-run --config=wsgetmail.json > wsgetmail.debug 2>&1
+
+When the mail processing command exits with an error (non-zero) status the
+action_on_fetched is not performed on that message so that it will be processed
+on the next run.
+
+Full output of the processing command is produced with C<--debug>.
+
 =head1 LIMITATIONS
 
 =head2 Fetching from Multiple Folders
