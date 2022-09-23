@@ -31,13 +31,6 @@ if ($^O ne 'VMS' and $secure_perl_path !~ /$Config{_exe}$/i) {
     $secure_perl_path .= $Config{_exe};
 }
 
-substitute(
-    {
-        PERL => $ENV{PERL} || $secure_perl_path,
-    },
-    'bin/wsgetmail',
-);
-
 install_script('bin/wsgetmail');
 auto_install();
 sign;
