@@ -1,6 +1,6 @@
 Revision history for App-wsgetmail
 
-0.07    ??/??/??
+0.07    22/09/23
         * Add documentation about error messages, warnings, and
           diagnosing problems with processing.
         * Count and report messages with errors in post-fetch processing

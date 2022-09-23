@@ -52,7 +52,7 @@ package App::wsgetmail;
 
 use Moo;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 =head1 NAME
 
@@ -535,7 +535,7 @@ Best Practical Solutions, LLC <modules@bestpractical.com>
 
 =head1 LICENSE AND COPYRIGHT
 
-This software is Copyright (c) 2015-2020 by Best Practical Solutions, LLC.
+This software is Copyright (c) 2015-2022 by Best Practical Solutions, LLC.
 
 This is free software, licensed under:
 
