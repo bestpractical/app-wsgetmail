@@ -1,5 +1,9 @@
 Revision history for App-wsgetmail
 
+0.08    22/09/23
+        * Update strip_cr to stripcr for more obvious compatibility
+          with the fetchmail option of the same name.
+
 0.07    22/09/23
         * Add documentation about error messages, warnings, and
           diagnosing problems with processing.
