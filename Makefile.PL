@@ -26,11 +26,6 @@ requires 'URI::Escape';
 requires 'URI';
 requires 'warnings';
 
-my $secure_perl_path = $Config{perlpath};
-if ($^O ne 'VMS' and $secure_perl_path !~ /$Config{_exe}$/i) {
-    $secure_perl_path .= $Config{_exe};
-}
-
 install_script('bin/wsgetmail');
 auto_install();
 sign;
