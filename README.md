@@ -17,7 +17,7 @@ where `wsgetmail.json` looks like:
     "global_access": 1,
     "username": "rt-comment@example.com",
     "folder": "Inbox",
-    "strip_cr": 0,
+    "stripcr": 0,
     "command": "/opt/rt5/bin/rt-mailgate",
     "command_args": "--url=http://rt.example.com/ --queue=General --action=comment",
     "command_timeout": 30,
@@ -203,13 +203,17 @@ configuration file.
 
     Set this to the name string of a mail folder to read.
 
-- strip\_cr
+- stripcr
 
     Set this to 1 to make wsgetmail convert the messages from the CRLF
     line-ending encoding to the LF line-ending encoding.
 
-    This is technically not standards-compliant, but some unix utilities
-    don't work with CRLF line-endings.
+    This emulates the fetchmail option of the same name, which enabled
+    the stripcr option if an MDA was declared. The feature is similar,
+    but you need to enable it explicitly in your configuration.
+
+    This option is helpful if you are forwarding email to a Linux
+    utility that doesn't work with CRLF line-endings.
 
 - command
 
