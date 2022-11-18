@@ -48,6 +48,9 @@
 
 use v5.10;
 
+require POSIX;
+require Time::HiRes;
+
 package App::wsgetmail;
 
 use Moo;
@@ -215,7 +218,7 @@ sub process_message {
         $ok = $self->post_fetch_action($message);
     }
     if ($self->config->{dump_messages}) {
-        warn "dumped message in file $filename" if ($self->config->{debug});
+        warn get_logging_timestamp() . " dumped message in file $filename" if ($self->config->{debug});
     }
     else {
         unlink $filename or warn "couldn't delete message file $filename : $!";
@@ -264,6 +267,21 @@ sub _build_mda {
         $config->{recipient} //= $self->config->{username};
     }
     return App::wsgetmail::MDA->new($config);
+}
+
+###
+
+=head1 PACKAGE FUNCTIONS
+
+=head2 get_logging_timestamp
+
+Returns an ISO 8601 timestamp suitable for logs using UTC.
+
+=cut
+
+sub get_logging_timestamp {
+    my ($s, $ms) = Time::HiRes::gettimeofday();
+    return POSIX::strftime( sprintf( '%%Y-%%m-%%dT%%H:%%M:%%S.%06.6dZ', $ms ), gmtime( $s ) );
 }
 
 =head1 CONFIGURATION

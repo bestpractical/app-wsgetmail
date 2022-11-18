@@ -302,7 +302,8 @@ sub get_message_mime_content {
     my $response = $self->_client->get_request([@path_parts]);
     unless ($response->is_success) {
         warn "failed to fetch message $message_id " . $response->status_line;
-        warn "response from server : " . $response->content if $self->debug;
+        warn App::wsgetmail::get_logging_timestamp() . " response headers from server : " . $response->headers if $self->debug;
+        warn App::wsgetmail::get_logging_timestamp() . " response from server : " . $response->content if $self->debug;
         return undef;
     }
 
@@ -326,7 +327,8 @@ sub delete_message {
     my $response = $self->_client->delete_request([@path_parts]);
     unless ($response->is_success) {
         warn "failed to delete message " . $response->status_line;
-        warn "response from server : " . $response->content if $self->debug;
+        warn App::wsgetmail::get_logging_timestamp() . " response headers from server : " . $response->headers if $self->debug;
+        warn App::wsgetmail::get_logging_timestamp() . " response from server : " . $response->content if $self->debug;
     }
 
     return $response;
@@ -346,7 +348,8 @@ sub mark_message_as_read {
                                                   Content => encode_json({isRead => $JSON::true }) });
     unless ($response->is_success) {
         warn "failed to mark message as read " . $response->status_line;
-        warn "response from server : " . $response->content if $self->debug;
+        warn App::wsgetmail::get_logging_timestamp() . " response headers from server : " . $response->headers if $self->debug;
+        warn App::wsgetmail::get_logging_timestamp() . " response from server : " . $response->content if $self->debug;
     }
 
     return $response;
@@ -368,7 +371,8 @@ sub get_folder_details {
     );
     unless ($response->is_success) {
         warn "failed to fetch folder detail " . $response->status_line;
-        warn "response from server : " . $response->content if $self->debug;
+        warn App::wsgetmail::get_logging_timestamp() . " response headers from server : " . $response->headers if $self->debug;
+        warn App::wsgetmail::get_logging_timestamp() . " response from server : " . $response->content if $self->debug;
         return undef;
     }
 
@@ -389,7 +393,8 @@ sub _fetch_messages {
         my $response = $self->_client->get_request_by_url($self->_next_fetch_url);
         unless ($response->is_success) {
             warn "failed to fetch messages " . $response->status_line;
-            warn "response from server : " . $response->content if $self->debug;
+            warn App::wsgetmail::get_logging_timestamp() . " response headers from server : " . $response->headers if $self->debug;
+            warn App::wsgetmail::get_logging_timestamp() . " response from server : " . $response->content if $self->debug;
             $self->_have_messages_to_fetch(0);
             return 0;
         }
@@ -439,7 +444,8 @@ sub _get_message_list {
 
     unless ($response->is_success) {
         warn "failed to fetch messages " . $response->status_line;
-        warn "response from server : " . $response->content if $self->debug;
+        warn App::wsgetmail::get_logging_timestamp() . " response headers from server : " . $response->headers if $self->debug;
+        warn App::wsgetmail::get_logging_timestamp() . " response from server : " . $response->content if $self->debug;
         return { value => [ ] };
     }
 

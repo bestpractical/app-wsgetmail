@@ -195,7 +195,7 @@ sub _run_command {
     open my $fh, "<$filename"  or die $!;
     my ($input, $output, $error);
     unless ($self->command) {
-        warn "no action to delivery message, command option is empty or null" if ($self->debug);
+        warn App::wsgetmail::get_logging_timestamp() . " no action to delivery message, command option is empty or null" if ($self->debug);
         return 1;
     }
 
@@ -205,7 +205,7 @@ sub _run_command {
                      $self->command,
                      ($self->debug ? join(' ', _split_command_args($self->command_args)) : '' ),
                      $filename, $?);
-        warn "output : $output\nerror:$error\n" if ($self->debug);
+        warn App::wsgetmail::get_logging_timestamp() . " output : $output\nerror:$error\n" if ($self->debug);
     }
     close $fh;
     return $ok;

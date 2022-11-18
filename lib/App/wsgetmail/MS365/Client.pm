@@ -221,7 +221,7 @@ sub get_request {
     my ($self, $parts, $params) = @_;
     # add error handling!
     my $uri = URI->new($self->build_rest_uri(@$parts));
-    warn "making GET request to url $uri" if ($self->debug);
+    warn App::wsgetmail::get_logging_timestamp() . " making GET request to url $uri" if ($self->debug);
     $uri->query_form($params) if ($params);
     return $self->_ua->get($uri);
 }
@@ -234,7 +234,7 @@ Makes a GET request to the URL in the C<$url> string.
 
 sub get_request_by_url {
     my ($self, $url) = @_;
-    warn "making GET request to url $url" if ($self->debug);
+    warn App::wsgetmail::get_logging_timestamp() . " making GET request to url $url" if ($self->debug);
     return $self->_ua->get($url);
 }
 
@@ -248,7 +248,7 @@ strings with the specific endpoint to request. C<$params> is unused.
 sub delete_request {
     my ($self, $parts, $params) = @_;
     my $url = $self->build_rest_uri(@$parts);
-    warn "making DELETE request to url $url" if ($self->debug);
+    warn App::wsgetmail::get_logging_timestamp() . " making DELETE request to url $url" if ($self->debug);
     return $self->_ua->delete($url);
 }
 
@@ -263,7 +263,7 @@ reference to an array or hash of data to include in the POST request body.
 sub post_request {
     my ($self, $path_parts, $post_data) = @_;
     my $url = $self->build_rest_uri(@$path_parts);
-    warn "making POST request to url $url" if ($self->debug);
+    warn App::wsgetmail::get_logging_timestamp() . " making POST request to url $url" if ($self->debug);
     return $self->_ua->post($url,$post_data);
 }
 
@@ -278,7 +278,7 @@ a hashref of data to include in the PATCH request body.
 sub patch_request {
      my ($self, $path_parts, $patch_params) = @_;
      my $url = $self->build_rest_uri(@$path_parts);
-     warn "making PATCH request to url $url" if ($self->debug);
+     warn App::wsgetmail::get_logging_timestamp() . " making PATCH request to url $url" if ($self->debug);
      return $self->_ua->patch($url,%$patch_params);
  }
 
@@ -287,7 +287,7 @@ sub patch_request {
 sub _build_authorised_ua {
     my $self = shift;
     my $ua = $self->_new_useragent;
-    warn "getting system access token" if ($self->debug);
+    warn App::wsgetmail::get_logging_timestamp() . " getting system access token" if ($self->debug);
     $ua->default_header( Authorization => $self->_access_token() );
     return $ua;
 }
@@ -308,7 +308,7 @@ sub _get_user_access_token {
     my $self = shift;
     my $ua = $self->_new_useragent;
     my $access_token;
-    warn "getting user access token" if ($self->debug);
+    warn App::wsgetmail::get_logging_timestamp() . " getting user access token" if ($self->debug);
     my $oauth_login_url = sprintf('https://login.windows.net/%s/oauth2/token', $self->tenant_id);
     my $response = $ua->post( $oauth_login_url,
                               {
@@ -328,7 +328,7 @@ sub _get_user_access_token {
     }
     else {
         # throw error
-        warn "auth response from server : $raw_message" if ($self->debug);
+        warn App::wsgetmail::get_logging_timestamp() . " auth response from server : $raw_message" if ($self->debug);
         die sprintf('unable to get user access token for user %s request failed with status %s ', $self->username, $response->status_line);
     }
     return $access_token;
