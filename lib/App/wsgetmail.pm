@@ -323,21 +323,13 @@ L<"Configure a client application to access a web API"
 quickstart|https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-configure-app-access-web-apis#application-permission-to-microsoft-graph>,
 under the section "Add permissions to access Microsoft Graph." When selecting
 the type of permissions, select "Application permissions." When prompted to
-select permissions, select all of the following:
+select permissions, select the following items:
 
 =over 4
 
 =item * Mail.Read
 
-=item * Mail.Read.Shared
-
 =item * Mail.ReadWrite
-
-=item * Mail.ReadWrite.Shared
-
-=item * openid
-
-=item * User.Read
 
 =back
 
