@@ -451,6 +451,19 @@ Set this to 1 to preserve the temporary files after processing.
 
 When C<"debug"> is also set the filenames will be reported on STDERR.
 
+=item debug
+
+Set this to enable additional diagnostic and status messages.
+
+=item quiet
+
+Set this to put wsgetmail into C<quiet> mode. This mode intended for use in cron
+or other automation.
+
+When in C<quiet> mode wsgetmail produces no output unless there is an error, in
+which case the configuration filename and error messages will be printed to
+STDERR.
+
 =back
 
 =head1 TESTING AND DEPLOYMENT
@@ -508,8 +521,19 @@ configuration, just run wsgetmail with different configurations:
 
 Microsoft applies some limits to the amount of API requests allowed as
 documented in their L<Microsoft Graph throttling guidance|https://docs.microsoft.com/en-us/graph/throttling>.
-If you reach a limit, requests to the API will start failing for a period
-of time.
+If you reach a limit, requests to the API will start failing with HTTP
+status code 429 for a period of time.
+
+=head2 Office 365 API Errors
+
+Best Practical Solutions has observed that very rarely the Microsoft Graph API
+will return a 5xx error code when attempting to list mail folder details,
+retrieve the message list, fetch message details, or delete a message. The
+cause for this is currently unknown, except that it is not related to the API
+limits mentioned above.
+
+Despite the relative rarity, if you run wsgetmail often enough you can see this
+multiple times in a typical day.
 
 =head1 SEE ALSO
 
