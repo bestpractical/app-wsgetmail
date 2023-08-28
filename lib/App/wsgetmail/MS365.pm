@@ -367,6 +367,14 @@ sub get_folder_details {
         [@path_parts], { '$filter' => "DisplayName eq '$folder_name'" }
     );
     unless ($response->is_success) {
+        # Don't ignore 503 response when debugging.
+        if (!$self->debug and $response->code == 503) {
+            # While the exact cause and meaning of this isn't known,
+            # it seems to be a temporary condition, so we'll just
+            # pretend that we got an empty list.
+            return { totalItemCount => 0 };
+        }
+
         warn "failed to fetch folder detail " . $response->status_line;
         warn "response from server : " . $response->content if $self->debug;
         return undef;
