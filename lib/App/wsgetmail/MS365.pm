@@ -325,8 +325,18 @@ sub delete_message {
     my @path_parts = ($self->global_access) ? ('users', $self->username, 'messages', $message_id) : ('me', 'messages', $message_id);
     my $response = $self->_client->delete_request([@path_parts]);
     unless ($response->is_success) {
-        warn "failed to delete message " . $response->status_line;
-        warn "response from server : " . $response->content if $self->debug;
+        # Don't ignore 503 response when debugging.
+        if (!$self->debug and $response->code == 503) {
+            # While the exact cause and meaning of this isn't known,
+            # it seems that the messages are getting deleted because
+            # we're not seeing a lot of duplicated content from processing
+            # messages multiple times
+            $response->code( 200 );
+        }
+        else {
+            warn "failed to delete message " . $response->status_line;
+            warn "response from server : " . $response->content if $self->debug;
+        }
     }
 
     return $response;

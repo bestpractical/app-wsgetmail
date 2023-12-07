@@ -533,9 +533,16 @@ unknown, except that it is not related to the API limits mentioned above.
 Despite the relative rarity, if you run wsgetmail often enough you can see this
 multiple times in a typical day.
 
-Therefore, when not running in C<debug> mode, if the API call to get the mail
-folder details returns a 503 then wsgetmail will treat it as if it received a
-success response with no messages in the folder.
+Therefore, when not running in C<debug> mode, for some API calls if a 503 is
+returned wsgetmail will treat it the same as success.
+
+=over 4
+
+=item * Mail folder message listing
+
+=item * Message delete
+
+=back
 
 =head1 SEE ALSO
 
