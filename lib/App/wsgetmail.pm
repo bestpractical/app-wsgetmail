@@ -206,9 +206,13 @@ sub process_message {
     my ($self, $message) = @_;
     my $client = $self->client;
     my $filename = $client->get_message_mime_content($message->id);
-    unless ($filename) {
+    if (not defined $filename) {
         warn "failed to get mime content for message ". $message->id;
         return 0;
+    }
+    elsif (not $filename) {
+        # failure, but handled silently
+        return 1;
     }
     my $ok = $self->forward($message, $filename);
     if ($ok) {
@@ -534,6 +538,9 @@ limits mentioned above.
 
 Despite the relative rarity, if you run wsgetmail often enough you can see this
 multiple times in a typical day.
+
+Therefore, by default wsgetmail now ignores C<5xx> response codes on all API
+calls, instead treating them as logically empty success response.
 
 =head1 SEE ALSO
 
