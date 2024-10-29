@@ -442,21 +442,35 @@ sub get_folder_details {
     my $self = shift;
     my $folder_name = $self->folder;
     my @path_parts = ($self->global_access) ? ('users', $self->username, 'mailFolders' ) : ('me', 'mailFolders');
-    my $response = $self->_client->get_request(
-        [@path_parts], { '$filter' => "DisplayName eq '$folder_name'" }
-    );
-    unless ($response->is_success) {
-        if ($self->_check_matrix('get_folder_details', $response->code) eq 'ignore') {
-            return { totalItemCount => 0 };
+    eval {
+        my $response = $self->_client->get_request(
+            [@path_parts], { '$filter' => "DisplayName eq '$folder_name'" }
+        );
+        unless ($response->is_success) {
+            if ($self->_check_matrix('get_folder_details', $response->code) eq 'ignore') {
+                return { totalItemCount => 0 };
+            }
+
+            warn "failed to fetch folder detail " . $response->status_line;
+            warn "response from server : " . $response->content if $self->debug;
+            return undef;
         }
 
-        warn "failed to fetch folder detail " . $response->status_line;
-        warn "response from server : " . $response->content if $self->debug;
-        return undef;
+        my $folders = decode_json( $response->content );
+        return $folders->{value}[0];
+    };
+
+    # all paths inside the eval return, so if we get here we know we had an exception
+    if (ref $@ and ref $@ eq 'Azure::AD::RemoteError') {
+        my $code = $@->{code};
+
+        if ($self->_check_matrix('initial_connect', $code) eq 'ignore') {
+            return { totalItemCount => 0 };
+        }
     }
 
-    my $folders = decode_json( $response->content );
-    return $folders->{value}[0];
+    # we don't know what to do, so punt
+    die $@;
 }
 
 
