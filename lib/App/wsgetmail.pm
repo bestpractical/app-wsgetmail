@@ -74,6 +74,7 @@ where C<wsgetmail.json> looks like:
     "username": "rt-comment@example.com",
     "folder": "Inbox",
     "stripcr": 0,
+    "size_limit": 10485760,
     "command": "/opt/rt5/bin/rt-mailgate",
     "command_args": "--url=http://rt.example.com/ --queue=General --action=comment",
     "command_timeout": 30,
@@ -419,6 +420,13 @@ but you need to enable it explicitly in your configuration.
 
 This option is helpful if you are forwarding email to a Linux
 utility that doesn't work with CRLF line-endings.
+
+=item size_limit
+
+Set this to the max size in bytes. Messages bigger than it will be skipped.
+Absence or 0 means to not limit size.
+
+E.g. to skip messages bigger than C<10MiB>, you can set it to C<10485760>.
 
 =item command
 

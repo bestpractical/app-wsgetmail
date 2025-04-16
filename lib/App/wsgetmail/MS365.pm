@@ -160,6 +160,20 @@ has global_access => (
     default => sub { return 0 }
 );
 
+=head2 size_limit
+
+An integer. Messages with size in bytes bigger than it will be skipped.
+
+Default is 0, which means no limit.
+
+=cut
+
+has size_limit => (
+    is => 'ro',
+    default => sub { return 0 }
+);
+
+
 =head2 secret
 
 A string with the client secret to use for global authentication. This
@@ -315,7 +329,7 @@ around BUILDARGS => sub {
         grep {
             defined $config->{$_}
         }
-        qw(client_id tenant_id username user_password global_access secret folder post_fetch_action stripcr debug response_matrix)
+        qw(client_id tenant_id username user_password global_access secret folder post_fetch_action stripcr size_limit debug response_matrix)
     };
 
     return $class->$orig($attributes);
@@ -373,6 +387,12 @@ sub get_message_mime_content {
         warn "failed to fetch message $message_id " . $response->status_line;
         warn "response from server : " . $response->content if $self->debug;
         return undef;
+    }
+
+    if ( $self->size_limit > 0 && length $response->content > $self->size_limit ) {
+        warn sprintf( "message $message_id exceeds size limit: %d > %d", length $response->content, $self->size_limit )
+            if $self->debug;
+        return ''; # Silently skip it.
     }
 
     # can we just write straight to file from response?
