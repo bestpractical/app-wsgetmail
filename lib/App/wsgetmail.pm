@@ -75,6 +75,7 @@ where C<wsgetmail.json> looks like:
     "folder": "Inbox",
     "stripcr": 0,
     "size_limit": 10485760,
+    "body_size_limit": 1048576,
     "command": "/opt/rt5/bin/rt-mailgate",
     "command_args": "--url=http://rt.example.com/ --queue=General --action=comment",
     "command_timeout": 30,
@@ -427,6 +428,18 @@ Set this to the max size in bytes. Messages bigger than it will be skipped.
 Absence or 0 means to not limit size.
 
 E.g. to skip messages bigger than C<10MiB>, you can set it to C<10485760>.
+
+=item body_size_limit
+
+Set this to the max body size in bytes. Messages with body bigger than it will
+be skipped. Absence or 0 means to not limit body size.
+
+E.g. to skip messages with body bigger than C<1MiB>, you can set it to
+C<1048576>.
+
+The difference between C<size_limit> and C<body_size_limit> is the former
+limits the size of the whole message, while the latter parses messages, skips
+attachments and only checks text/plain and text/html parts.
 
 =item command
 

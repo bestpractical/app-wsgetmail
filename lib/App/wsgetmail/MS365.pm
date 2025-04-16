@@ -173,6 +173,19 @@ has size_limit => (
     default => sub { return 0 }
 );
 
+=head2 body_size_limit
+
+An integer. Messages with body size in bytes bigger than it will be skipped.
+
+Default is 0, which means no limit.
+
+=cut
+
+has body_size_limit => (
+    is => 'ro',
+    default => sub { return 0 }
+);
+
 
 =head2 secret
 
@@ -329,7 +342,7 @@ around BUILDARGS => sub {
         grep {
             defined $config->{$_}
         }
-        qw(client_id tenant_id username user_password global_access secret folder post_fetch_action stripcr size_limit debug response_matrix)
+        qw(client_id tenant_id username user_password global_access secret folder post_fetch_action stripcr size_limit body_size_limit debug response_matrix)
     };
 
     return $class->$orig($attributes);
@@ -393,6 +406,49 @@ sub get_message_mime_content {
         warn sprintf( "message $message_id exceeds size limit: %d > %d", length $response->content, $self->size_limit )
             if $self->debug;
         return ''; # Silently skip it.
+    }
+
+    if ( $self->body_size_limit > 0 && length $response->content > $self->body_size_limit ) {
+        require MIME::Parser;
+        my $parser = MIME::Parser->new();
+        $parser->extract_nested_messages(0);
+        my $entity;
+        eval { $entity = $parser->parse_data( $response->content ) };
+        if ($@) {
+            warn "couldn't parse message $message_id: $@";
+            $parser->filer->purge;
+            return;
+        }
+
+        my $exceeded_size;
+        if ( $entity->parts ) {
+            # Expand multiplart/alternative which usually contains text/plain and text/html
+            my @parts = map { ( $_->mime_type // '' ) =~ m{^multipart/alternative$}i ? $_->parts : $_ } $entity->parts;
+            for my $part ( @parts ) {
+                next unless ( $part->mime_type // '' ) =~ m{^text/(?:plain|html)$}i;
+                next if ( $part->head->get('Content-Disposition') // '' ) =~ /attachment/i;
+                if ( length $part->stringify_body > $self->body_size_limit ) {
+                    $exceeded_size = length $part->stringify_body;
+                    last;
+                }
+            }
+        }
+        elsif ( ( $entity->mime_type // '' ) =~ m{^text/(?:plain|html)$}i
+            && length $entity->stringify_body > $self->body_size_limit )
+        {
+            $exceeded_size = length $entity->stringify_body;
+        }
+
+        $parser->filer->purge;
+
+        if ($exceeded_size) {
+            warn sprintf(
+                "message $message_id exceeds body size limit: %d > %d",
+                $exceeded_size,
+                $self->body_size_limit
+            ) if $self->debug;
+            return '';    # Silently skip it.
+        }
     }
 
     # can we just write straight to file from response?
