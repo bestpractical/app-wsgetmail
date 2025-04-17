@@ -29,6 +29,7 @@ requires:
   IPC::Run: 0
   JSON: 0
   LWP::UserAgent: '6.42'
+  MIME::Parser: 0
   Module::Load: 0
   Moo: 0
   Pod::Usage: 0
@@ -41,4 +42,4 @@ requires:
   warnings: 0
 resources:
   license: http://opensource.org/licenses/gpl-license.php
-version: '0.09'
+version: '0.10'
