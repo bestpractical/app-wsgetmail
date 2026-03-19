@@ -2,7 +2,7 @@
 #
 # COPYRIGHT:
 #
-# This software is Copyright (c) 2020-2022 Best Practical Solutions, LLC
+# This software is Copyright (c) 2020-2026 Best Practical Solutions, LLC
 #                                          <sales@bestpractical.com>
 #
 # (Except where explicitly superseded by other copyright notices)
@@ -52,7 +52,7 @@ package App::wsgetmail;
 
 use Moo;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 =head1 NAME
 
