@@ -398,6 +398,29 @@ configuration file.
 
 =back
 
+=head3 Configuring Microsoft Government Cloud
+
+If you are connecting to a Microsoft Government Cloud tenant (GCC High or
+DoD), the default Microsoft Graph API and OAuth endpoints will not work. Use
+the following options to point wsgetmail at the correct endpoints.
+
+=over 4
+
+=item resource_url
+
+Set this to the Microsoft Graph API base URL for your cloud environment.
+The default is C<https://graph.microsoft.com/>. For GCC High, use
+C<https://graph.microsoft.us/>. For DoD, use
+C<https://dod-graph.microsoft.us/>.
+
+=item login_base_url
+
+Set this to the base URL for OAuth authentication. The default is
+C<https://login.windows.net>. For GCC High and DoD, use
+C<https://login.microsoftonline.us>.
+
+=back
+
 =head2 Configuring the mail delivery command
 
 Now that you've configured wsgetmail to access a mail account, all that's
